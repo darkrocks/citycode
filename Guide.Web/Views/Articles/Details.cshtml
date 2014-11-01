@@ -1,0 +1,152 @@
+﻿@using Guide.Model.Model
+@using Resx.Articles
+@model Guide.Model.Model.ArticleModel
+
+@section scripts{
+	@(this.Html.Partial("_ArticlesSharingJavascript"))
+	<script src="http://api-maps.yandex.ru/2.0-stable/?load=package.standard&lang=@(this.ViewBag.CurrentLanguage)" type="text/javascript"> </script>
+	<script type="text/javascript">
+		guide.mapService.addMapToPage('@(this.Model.Coordinate1)',
+			'@(this.Model.Coordinate2)',
+			'@(this.Model.Header)',
+			"#mapWrapper",
+			"map");
+		guide.imageService.prepareArticleImagesToPopup();
+		guide.foursquareCommentsService.render(
+			'@(ViewBag.FoursquareOAuthToken)',
+			'@(this.Model.FoursquareId)',
+			'#commentsList',
+			'#commentsList2',
+			'#commentsHeader');
+	</script>
+}
+<article>
+
+	<div class="row">
+		<div class="col-md-12">
+			<header class="pull-left">
+				<h2>@(this.Model.Header)</h2>
+			</header>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="btn-group-sm pull-left">
+				<a id="vkShareBtn" class="btn btn-default" target="_blank" href="#"><i class="fa fa-vk"></i></a>
+				<a id="twShareBtn" type="button" class="btn btn-default" target="_blank" href="#"><i class="fa fa-twitter"></i></a>
+				<a id="fbShareBtn" type="button" class="btn btn-default" target="_blank" href="#"><i class="fa fa-facebook"></i></a>
+				<a type="button" class="btn btn-default" href="#mapWrapper"><i class="glyphicon glyphicon-map-marker"></i></a>
+			</div>
+			<div class="btn-group-sm pull-right">
+				<a class="btn btn-primary" @(this.ViewBag.PrevArticleLinkDisabled ? "disabled='disabled'" : "") href="@(this.ViewBag.PrevArticleUrl)">
+					<span class="glyphicon glyphicon-chevron-left"></span>
+					@*					@Details.Prev*@
+				</a>
+				<a class="btn btn-primary" @(this.ViewBag.NextArticleLinkDisabled ? "disabled='disabled'" : "") href="@(this.ViewBag.NextArticleUrl)">
+					@*					@Details.Next *@
+					<span class="glyphicon glyphicon-chevron-right"></span>
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		@if (this.Request.Browser.IsMobileDevice)
+		{
+			@:<div class="col-md-12 guide-article-wrapper">
+		}
+		else
+		{
+
+			<div class="col-md-3 guide-place-passport-wrapper">
+				<h3>@Resx.Articles.Details.PlacesNear</h3>
+				@foreach (ArticleModel article in ViewBag.PlacesNear)
+				{
+					string url = (this.Url.Action("Details", "Articles", new { id = article.ArticleId, city = ViewBag.UrlCityParam, title = article.UrlParam }));
+					<div class="thumbnail">
+						<a href="@url" class="guide-place-passport-image">
+							<img src="@article.ThumbImageUrl" alt="">
+						</a>
+						<div class="caption" style ="background: #fbfbfb; border-top: 1px solid #ddd;">
+							<h4><a href="@url">@article.Header</a></h4>
+							<p>@article.Teaser</p>
+						</div>
+					</div>
+				}
+		
+			</div>
+			@:<div class="col-md-9 guide-article-wrapper">
+		}
+
+		@if (this.Model.Images != null && this.Model.Images.Count > 0)
+		{
+			<div class="guide-main-info">
+				<figure>
+					<a href="@(this.Model.Images[0].Url)" title="@(this.Model.Images[0].Caption)" data-gallery>
+						<img src="@(this.Model.Images[0].Url)" class="guide-article-main-image img-responsive" alt="@(this.Model.Images[0].Caption)">
+					</a>
+				</figure>
+				<table border="1" cellpadding="1" cellspacing="1" class="table table-bordered guide-maininfo-table">
+					<tbody>
+						<tr>
+							<td class="guide-maininfo-table-td"><strong>@Details.Address</strong></td>
+							<td class="guide-maininfo-table-td">@(this.Model.Address)</td>
+						</tr>
+						@if (!string.IsNullOrWhiteSpace(this.Model.Phone))
+						{
+							<tr>
+								<td class="guide-maininfo-table-td"><strong>@Details.Phone</strong></td>
+								<td class="guide-maininfo-table-td">@(this.Model.Phone)</td>
+							</tr>
+						}
+						@if (!string.IsNullOrWhiteSpace(this.Model.Website))
+						{
+							<tr>
+								<td class="guide-maininfo-table-td"><strong>@Details.Website</strong></td>
+								<td class="guide-maininfo-table-td"><a href="@string.Format("{0}{1}", "http://", this.Model.Website)">@this.Model.Website</a></td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		}
+
+		@(this.Html.Raw(this.Model.Body))
+
+		<div>
+			@if (this.Model.Images != null)
+			{
+				for (int i = 1; i < this.Model.Images.Count; i++)
+				{
+					ImageModel image = this.Model.Images[i];
+
+					<a href="@image.Url" title="@image.Caption" style="display: none" data-gallery>
+						<img src="@image.Url" class="guide-article-thumb-gallery" alt="@image.Caption">
+					</a>
+				}
+			}
+		</div>
+<div class="row" >
+	<div id = "mapWrapper" class="col-md-12" >
+		<h4 > @Details.Address: @(this.Model.Address) </h4 >
+		<div id = "map" style = "height: 400px;" ></div >
+	</div >
+</div >
+<div id = "commentsHeader" class="row" >
+	<div class="col-md-12" >
+		<h3 > @Details.Comments <a href = "@(this.Model.FoursquareUrl)" ><span class="fa fa-foursquare" ></span > foursquare </a ></h3 >
+	</div >
+</div >
+<div class="row" >
+	<div class="col-md-6" >
+		<ul id = "commentsList" class="media-list" ></ul >
+	</div >
+	<div class="col-md-6" >
+		<ul id = "commentsList2" class="media-list" ></ul >
+	</div >
+</div >
+
+	</div>
+
+</article >
+

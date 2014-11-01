@@ -1,0 +1,28 @@
+﻿@using Guide.Model.Model
+@using PagedList.Mvc
+@model PagedList.IPagedList<Guide.Model.Model.ArticleModel>
+
+<div class="row">
+	<div class="col-md-12">
+		<header class="pull-left">
+			<h3>@Resx.Articles.Search.SearchResultsFor "@(this.ViewBag.Query)"</h3>
+		</header>
+	</div>
+</div>
+<div class="row guide-action-panel">
+	<div class="col-md-12">
+		<div class="btn-group-sm pull-right guide-pagination-container">
+			@if (this.Model.PageCount > 1)
+			{
+				@(this.Html.PagedListPager(this.Model, page => this.Url.Action("Search", new { query = this.ViewBag.Query, page}), new PagedListRenderOptions { MaximumPageNumbersToDisplay = 3, DisplayLinkToFirstPage = PagedListDisplayMode.Never, DisplayLinkToLastPage = PagedListDisplayMode.Never }))
+			}
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<ul class="media-list">
+			@Html.Partial("_ArticlesList4Rows", Model)
+		</ul>
+	</div>
+</div>

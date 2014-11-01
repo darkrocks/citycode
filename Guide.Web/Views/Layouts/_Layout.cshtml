@@ -1,0 +1,20 @@
+﻿
+@{
+	this.Layout = this.Request.Browser.IsMobileDevice ? "~/Views/Layouts/_MobileLayout.cshtml" : "~/Views/Layouts/_DesktopLayout.cshtml";
+}
+@section styles{
+	@(this.RenderSection("styles", false))
+}
+
+
+@section scripts{
+	@(this.Html.Partial("_ImageGallery"))
+
+	@Scripts.Render("~/bundles/jquery-edge")
+	@Scripts.Render("~/bundles/bootstrap")
+	@Scripts.Render("~/bundles/thirdparty")
+	@Scripts.Render("~/bundles/guide")
+	@(this.RenderSection("scripts", false))
+}
+
+@(this.RenderBody())

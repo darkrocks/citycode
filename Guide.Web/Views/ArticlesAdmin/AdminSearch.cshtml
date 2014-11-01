@@ -1,0 +1,36 @@
+﻿@using Guide.Model.Model
+@using PagedList.Mvc
+@using Telerik.Web.Mvc.UI
+@model PagedList.IPagedList<Guide.Model.Model.ArticleEditInlineModel>
+
+@{
+	this.Layout = "~/Views/Layouts/_AdminLayout.cshtml";
+}
+
+@section scripts
+{
+	@Scripts.Render("~/bundles/jqueryval")
+	@(this.Html.Telerik().ScriptRegistrar().Globalization(true).jQuery(false).jQueryValidation(false).DefaultGroup(group => group.DefaultPath("~/Scripts/telerik/").Compress(true)))
+}
+@section styles
+{
+	@(this.Html.Telerik().StyleSheetRegistrar().DefaultGroup(group => group.DefaultPath("~/Content/telerik/").Add("telerik.common.min.css").Add("telerik.windows7.min.css").Combined(true)))
+}
+<div class="row">
+	<div class="col-md-12">
+		<header class="pull-left">
+			<h2>Administration</h2>
+			<h3>@Resx.Articles.Search.SearchResultsFor "@(this.ViewBag.Query)"</h3>
+			<div>
+				@(this.Html.Partial("_AdminSearch"))
+			</div>
+			<br />
+			<br />
+		</header>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		@(this.Html.Partial("_ArticlesGrid"))
+	</div>
+</div>

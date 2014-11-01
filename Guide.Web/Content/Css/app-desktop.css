@@ -1,0 +1,11 @@
+body {
+  background-color: white;
+}
+.sidebar-nav {
+  position: fixed;
+  overflow: auto;
+}
+.guide-place-passport-wrapper {
+  padding-left: 10px;
+  padding-right: 10px;
+}

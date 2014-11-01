@@ -1,0 +1,77 @@
+﻿@using Guide.Model.Model
+@using PagedList.Mvc
+@model PagedList.IPagedList<Guide.Model.Model.ArticleModel>
+@section scripts{
+	<script type="text/javascript">
+		@{
+			string thumbUrl = "";
+
+			ArticleModel article = this.Model.FirstOrDefault();
+			if (article != null)
+			{
+				thumbUrl = article.ThumbImageUrl;
+			}
+		}
+		$('#vkShareBtn').attr('href', guide.socialSharing.getVkUrl(
+			'(@(this.ViewBag.Title))',
+			'',
+			'@(thumbUrl)'
+		));
+		$('#twShareBtn').attr('href', guide.socialSharing.getTwUrl('@(ViewBag.ShortUrl)', '@(ViewBag.Title)'));
+		$('#fbShareBtn').attr('href', guide.socialSharing.getFbUrl('@(ViewBag.ShortUrl)'));
+	</script>
+}
+<div class="row">
+	<div class="col-md-12">
+		<header class="pull-left">
+			<h3>@(this.ViewBag.Title)</h3>
+		</header>
+	</div>
+</div>
+<div class="row guide-action-panel">
+	<div class="col-md-12">
+		<div class="btn-group-sm pull-left">
+			<div class="btn-group-sm pull-left">
+				<a id="vkShareBtn" class="btn btn-default" target="_blank" href="#"><i class="fa fa-vk"></i></a>
+				<a id="twShareBtn" type="button" class="btn btn-default" target="_blank" href="#"><i class="fa fa-twitter"></i></a>
+				<a id="fbShareBtn" type="button" class="btn btn-default" target="_blank" href="#"><i class="fa fa-facebook"></i></a>
+			</div>
+		</div>
+		<div class="btn-group-sm pull-right guide-pagination-container">
+			@if (this.Model.PageCount > 1)
+			{
+				@(this.Html.PagedListPager(this.Model, page => this.Url.Action("List", new { cityId = this.ViewBag.CityId, page = page, sightTypeId = this.ViewBag.SightTypeId, title = ViewBag.TitleForUrl }), new PagedListRenderOptions { MaximumPageNumbersToDisplay = 3, DisplayLinkToFirstPage = PagedListDisplayMode.Never, DisplayLinkToLastPage = PagedListDisplayMode.Never }))
+			}
+		</div>
+	</div>
+</div>
+<div class="row">
+	
+	@if (this.Request.Browser.IsMobileDevice)
+	{
+		<div class="col-sm-12">
+			@Html.Partial("_ArticlesList4Rows", Model)
+		</div>
+	}
+	else
+	{
+		<div class="col-sm-3">
+			@if (!this.Request.Browser.IsMobileDevice)
+			{
+				<div class="list-group">
+					@if (this.ViewBag.SightTypesNavList != null)
+					{
+						foreach (SightTypeModel sightType in (IEnumerable<SightTypeModel>)this.ViewBag.SightTypesNavList)
+						{
+							@(this.Html.ActionLink(sightType.PluralName, "List", "Articles", new { cityId = 1, sightTypeId = sightType.Id, title = sightType.UrlParam }, new { @class = "list-group-item" + ((this.ViewBag.SightTypeId != null && this.ViewBag.SightTypeId == sightType.Id) ? " active" : "") }))
+						}
+					}
+				</div>
+			}
+		</div>
+		<div class="col-sm-9">
+			@Html.Partial("_ArticlesList3Rows", Model)
+		</div>
+	}
+
+</div>

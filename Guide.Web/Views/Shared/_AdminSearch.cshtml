@@ -1,0 +1,11 @@
+﻿<div>
+	@using (Html.BeginForm("AdminSearch", (string)ViewBag.SearchController, null, FormMethod.Get, null))
+	{
+		<div class="guide-search-form-group">
+			<input type="text" name="query" placeholder="@Resx.Layout.Search" class="guide-admin-search-input">
+		</div>
+		<button type="submit" class="btn btn-default btn-sm guide-search-submit">
+			<span class="glyphicon glyphicon-search"></span>
+		</button>
+	}
+</div>

@@ -1,0 +1,62 @@
+﻿@using System.Web.UI.WebControls
+@using Guide.Model.Entities
+@using Telerik.Web.Mvc.UI
+@using Guide.Model.Model
+
+@{ 
+	@(Html.Telerik().Grid<Article>()//.TableHtmlAttributes(new { style = "height:500px" })
+			.Filterable()
+					.Groupable()
+		.Name("ArticlesGrid")
+		.DataKeys(keys =>
+		{
+			keys.Add("Id");
+		})
+		.ToolBar(commands => commands.Insert().Text("Article").
+			ButtonType(GridButtonType.BareImage).
+			ImageHtmlAttributes(new { style = "margin-left:0" }))
+		.DataBinding(dataBinding =>
+		{
+			dataBinding.Ajax()
+				.Select(ViewBag.Grid, "ArticlesAdmin", null)
+				.Insert("GridInsert", "ArticlesAdmin", null)
+				.Update("GridSave", "ArticlesAdmin", null)
+				.Delete("GridDelete", "ArticlesAdmin", null);
+		})
+		.Columns(columns =>
+		{
+			columns.Bound(p => p.Id).Hidden().ReadOnly().Width(20);
+			columns.Bound(p => p.CityId).Hidden().ReadOnly().Width(20);
+			columns.Bound(p => p.ThumbnailUrl).Title("Thumb").ReadOnly().Filterable(false).ClientTemplate(@"<img class='media-object thumbnail guide-article-thumb' style='margin-bottom: 0;' src='<#=ThumbnailUrl#>' />").Width(100);
+			columns.Bound(p => p.HeaderEn).Width(200);
+			columns.Bound(p => p.HeaderRu).Width(200);
+			columns.Bound(p => p.StreetNameRu).Width(200);
+			columns.Bound(p => p.Categories).Width(100).ReadOnly();
+			columns.Bound(p => p.Published).Width(80);
+			columns.Command(commands =>
+			{
+				commands.Edit().ButtonType(GridButtonType.BareImage);
+				commands.Delete().ButtonType(GridButtonType.BareImage);
+			}).Width(30);
+		}).ClientEvents(events => events.OnRowSelect("onArticleRowSelect"))
+		.Editable(editing => editing.Mode(GridEditMode.InLine)
+		.InsertRowPosition(GridInsertRowPosition.Top))
+		.Pageable()
+		.Scrollable(c => c.Height("600px"))
+		.Sortable()
+		.Selectable()
+)
+
+}
+
+<script type="text/javascript">
+	function onArticleRowSelect(e) {
+		var id = parseInt(e.row.cells[0].innerHTML, 10);
+		if (id > 0) {
+			window.open("/@(ViewBag.CurrentLanguage)/ArticlesAdmin/Edit/" + id, "_self");
+		}
+	}
+</script>
+
+
+

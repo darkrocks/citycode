@@ -1,0 +1,19 @@
+﻿using System;
+
+namespace Guide.Web.Attributes
+{
+	using System.Reflection;
+	using System.Web.Mvc;
+
+	public class HttpParamActionAttribute : ActionNameSelectorAttribute
+	{
+		public override bool IsValidName(ControllerContext controllerContext, string actionName, MethodInfo methodInfo)
+		{
+			if (actionName.Equals(methodInfo.Name, StringComparison.InvariantCultureIgnoreCase))
+				return true;
+
+			var request = controllerContext.RequestContext.HttpContext.Request;
+			return request[methodInfo.Name] != null;
+		}
+	}
+}
