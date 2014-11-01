@@ -1,0 +1,135 @@
+﻿@using Guide.Model.Model
+@using Guide.Web.Infrastructure.Extensions
+@using Resx
+
+@{
+	this.Layout = "~/Views/Layouts/_WrapperLayout.cshtml";
+}
+@section scripts
+{
+	@(this.RenderSection("scripts", false))
+
+	<script>
+		$("#stripped-button").click(function(e) {
+			e.preventDefault();
+			$("#wrapper").toggleClass("active");
+			$("html").toggleClass("active");
+			$("body").toggleClass("active");
+		});
+	</script>
+	@*<script src="~/Scripts/bootstrap-ie10mobile-hack.js"> </script>*@
+}
+@section styles{
+	@(this.RenderSection("styles", false))
+	@Styles.Render("~/Content/app")
+	@if (this.Request.Browser.IsMobileDevice)
+	{
+		@Styles.Render("~/Content/css-mobile")
+	}
+	else
+	{
+		@Styles.Render("~/Content/css-desktop")
+	}
+}
+
+
+
+<div id="wrapper">
+	<!-- Sidebar -->
+	<div id="sidebar-wrapper">
+		
+		<ul id="sidebar-nav"  class="sidebar-nav">
+			<li id="sidebar-brand" class="sidebar-brand">
+				<a href="@Html.GetHomeUrl()"><div class="citycode-logo-125" style="margin-top: 15px; margin-left: 15px; "></div></a>
+			</li>
+			<li class="guide-search-li">
+				@using (this.Html.BeginForm("Search", "Articles", FormMethod.Get))
+				{
+					<input type="hidden" name="cityId" value="1" />
+					<div class="guide-search-form-group" style="margin-bottom: 10px;">
+						<input type="text" name="query" placeholder="@Resx.Layout.Search">
+					</div>
+					<button type="submit" class="btn btn-default btn-sm guide-search-submit">
+						<span class="glyphicon glyphicon-search"></span>
+					</button>
+				}
+			</li>
+
+			<li style ="clear: both;"></li>
+			<li><a href="" data-toggle="modal" data-target="#dummyContentModal">@Resx.Layout.Routes</a></li>
+			<li><a href="" data-toggle="modal" data-target="#dummyContentModal">@Resx.Layout.Tours</a></li>
+			<li><a href="" data-toggle="modal" data-target="#dummyContentModal">@Resx.Layout.Hotels</a></li>
+			<li><h4>@Resx.Layout.Categories</h4></li>
+			<li  class="guid-nested-menu-element @(this.ViewBag.SightTypeId == null ? "active" : "")">@(this.Html.ActionLink(Resx.Layout.Landmarks, "List", "Articles", new { cityId = 1, sightTypeId = 0, title = this.ViewBag.LandmarksListUrlParam }, null))</li>
+			
+			@if (this.ViewBag.SightTypesNavList != null)
+			{
+				foreach (SightTypeModel sightType in (IEnumerable<SightTypeModel>)this.ViewBag.SightTypesNavList)
+				{
+					<li  class="guid-nested-menu-element @((this.ViewBag.SightTypeId != null && this.ViewBag.SightTypeId == sightType.Id) ? "active" : "")">
+
+						@(this.Html.ActionLink(sightType.PluralName, "List", "Articles", new { cityId = 1, sightTypeId = sightType.Id, title = sightType.UrlParam }, null))
+					</li>
+				}
+			}
+			<li class="guide-divider"></li>
+			<li>
+				@if (this.Request.IsAuthenticated)
+				{
+					using (this.Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+					{
+						@(this.Html.AntiForgeryToken())
+
+@*						<li>
+							@(this.Html.ActionLink(Resx.Layout.Hello + " " + this.User.Identity.Name + "!", "Manage", "Account", null, new {title = "Manage"}))
+						</li>*@
+						<li><a href="javascript:document.getElementById('logoutForm').submit()">@Resx.Layout.Logoff</a></li>
+					}
+				}
+				else
+				{
+					@*        <li>@Html.ActionLink(Resx.Layout.Register, "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>*@
+					<li>@(this.Html.ActionLink(Resx.Layout.Login, "Login", "Account", new { returnUrl = this.Request.Url.AbsoluteUri }, new { id = "loginLink" }))</li>
+				}
+			</li>
+		</ul>
+	</div>
+
+	<!-- Page content -->
+	<div id="page-content-wrapper">
+		<div class="toggle-bar">
+			<div class="navbar navbar-inverse navbar-static-top navbar-sidevar">
+				<div class="navbar-header">
+					<button id="stripped-button" class="guide-toggle"  type="button">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					@*@{
+						var cssClasses = new List<string>();
+						cssClasses.Add("navbar-brand");
+						cssClasses.Add("navbar-brand-sidebar");
+						cssClasses.Add("guide-logo");
+						@(this.Html.HomeLink(cssClasses, Common.AppName))
+					}*@
+					
+					<a href="@Html.GetHomeUrl()"><div class="citycode-logo-125" style="position: absolute; left: 50%; margin-left: -60px; margin-top: 13px; "></div></a>
+					<div class="guide-toggle flagBtn">
+						@(this.Html.Partial("_LanguageButton"))
+					</div>
+					
+
+				</div>
+			</div>
+		</div>
+
+		<div class="container body-content container-sidebar">
+			<div class="page-content inset page-content-sidebar">
+
+				@(this.RenderBody())
+				@(this.Html.Partial("_FooterPartial"))
+
+			</div>
+		</div>
+	</div>
+</div>

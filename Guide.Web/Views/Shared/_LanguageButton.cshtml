@@ -1,0 +1,16 @@
+﻿@using Guide.Web.Infrastructure.Extensions
+@{
+	dynamic secondLanguageUrl = this.ViewBag.SecondLanguageUrl == null ? this.Html.GetSecondLanguageUrl() : this.ViewBag.SecondLanguageUrl;
+}
+@if (this.ViewBag.CurrentLanguageName == "Русский")
+{
+	<a type="button" class="f32" style="padding: 0" href="@(secondLanguageUrl)">
+		<span class="flag gb"></span>
+	</a>
+}
+else
+{
+	<a type="button" class="f32" style="padding: 0" href="@(secondLanguageUrl)">
+		<span class="flag ru"></span>
+	</a>
+}

@@ -1,0 +1,10 @@
+﻿@model Guide.Model.Model.ArticleModel
+<script type="text/javascript">
+	$('#vkShareBtn').attr('href', guide.socialSharing.getVkUrl(
+		'@(Model.Header)',
+		'@(Model.Teaser)',
+		'@(Model.Images.Count > 0 ? Model.Images[0].Url : "")'
+	));
+	$('#twShareBtn').attr('href', guide.socialSharing.getTwUrl('@(ViewBag.ShortUrl)', '@(Model.Header)'));
+	$('#fbShareBtn').attr('href', guide.socialSharing.getFbUrl('@(ViewBag.ShortUrl)'));
+ </script>

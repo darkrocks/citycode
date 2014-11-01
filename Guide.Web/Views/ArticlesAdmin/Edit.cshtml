@@ -1,0 +1,251 @@
+﻿@{
+	this.Layout = "~/Views/Layouts/_AdminLayout.cshtml";
+}
+@model Guide.Model.Model.ArticleEditModel
+@section styles
+{
+	@Styles.Render("~/Content/textEditor")
+}
+
+
+@section scripts
+{
+	@Scripts.Render("~/bundles/jqueryval")
+	@Scripts.Render("~/bundles/textEditor")
+	<script type="text/javascript">
+		$('#tabUl a').click(function(e) {
+			e.preventDefault();
+			$(this).tab('show');
+		});
+		CKEDITOR.replace('bodyRu');
+		CKEDITOR.replace('bodyEn');
+
+		$('#FetchFromFoursquareBtn').click(function() {
+			$('#FetchFromFoursquare').val("true");
+			$('#articleEditForm').submit();
+		});
+	</script>
+}
+<div class="row">
+	<div class="col-md-12">
+		<h2>Administration</h2>
+		<h3>
+			@(this.ViewBag.Method) article @(this.Model.HeaderEn)
+		</h3>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		@(this.Html.ActionLink("Back to list", "AdminList", "ArticlesAdmin", new {cityCode = this.Model.City.ThreeLetterCode}, new {@class = "pull-right"}))
+		<a class="pull-right" style="padding-right: 15px;" href="@(this.Url.Action("Details", "Articles", new {id = this.Model.Id, onlyPubished = false}))">
+			Preview
+		</a>
+		@if (Model.QrImages != null && Model.QrImages.Count > 0)
+		{
+			<a class="pull-right" style="padding-right: 15px;" href="@(this.Url.Action("QrCode", "ArticlesAdmin", new {id = this.Model.Id}))">
+				QrCode
+			</a>
+		}
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<br />
+		@*<ul id="tabUl" class="nav nav-tabs">
+			<li class="active"><a href="#generalTab">General</a></li>
+			<li><a href="#russianTab">Russian</a></li>
+			<li><a href="#englishTab">English</a></li>
+		</ul>*@
+		@using (this.Html.BeginForm((string) this.ViewBag.Method, "ArticlesAdmin", FormMethod.Post, new {enctype = "multipart/form-data", id = "articleEditForm", @class = "form-horizontal"}))
+		{
+			@(this.Html.ValidationSummary(false))
+			@*<div class="tab-content">
+				<div class="tab-pane active" id="generalTab">*@
+					<fieldset>
+						@(this.Html.HiddenFor(model => model.City.CountryId))
+						@(this.Html.HiddenFor(model => model.City.ThreeLetterCode))
+						@(this.Html.HiddenFor(model => model.ThumbnailId))
+						@(this.Html.HiddenFor(model => model.Id))
+						<input type="hidden" id="FetchFromFoursquare" name="FetchFromFoursquare" value="false" />
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Main image</label>
+							<div class="col-sm-10">
+								@if (this.Model.ThumbnailImageUrl != null)
+								{
+									<img class="guide-article-thumb" src="@(this.Model.ThumbnailImageUrl)" />
+								}
+								else
+								{
+									<div class="media-object thumbnail guide-article-thumb-empty pull-left"></div>
+								}
+							</div>
+						</div>
+						<div class="form-group">
+							@(this.Html.LabelFor(model => model.File, new {@class = "col-sm-2 control-label"}))
+							<div class="col-sm-10">
+								<input type="file" name="File" />
+								@(this.Html.ValidationMessageFor(model => model.File))
+							</div>
+						</div>
+						<div class="form-group">
+							@(this.Html.LabelFor(model => model.Published, new {@class = "col-sm-2 control-label"}))
+							<div class="col-sm-10">
+								@(this.Html.EditorFor(model => model.Published, new {@class = "form-control"}))
+								@(this.Html.ValidationMessageFor(model => model.Published))
+							</div>
+						</div>
+						<div class="form-group">
+							@(this.Html.LabelFor(model => model.HeaderRu, new {@class = "col-sm-2 control-label"}))
+							<div class="col-sm-10">
+								@(this.Html.TextBoxFor(model => model.HeaderRu, new {@class = "form-control"}))
+								@(this.Html.ValidationMessageFor(model => model.HeaderRu))
+							</div>
+						</div>
+						<div class="form-group">
+							@(this.Html.LabelFor(model => model.HeaderEn, new {@class = "col-sm-2 control-label"}))
+							<div class="col-sm-10">
+								@(this.Html.TextBoxFor(model => model.HeaderEn, new {@class = "form-control"}))
+								@(this.Html.ValidationMessageFor(model => model.HeaderEn))
+							</div>
+						</div>
+						<div class="form-group">
+							@(this.Html.LabelFor(model => model.City, new {@class = "col-sm-2 control-label"}))
+							<div class="col-sm-10">
+								@(this.Html.DropDownList("CityId", (SelectList) this.ViewBag.Cities, new {@class = "form-control"}))
+								@(this.Html.ValidationMessageFor(model => model.CityId))
+							</div>
+						</div>
+						<div class="form-group">
+							@(this.Html.LabelFor(model => model.StreetNameRu, new {@class = "col-sm-2 control-label"}))
+							<div class="col-sm-10">
+								@(this.Html.TextBoxFor(model => model.StreetNameRu, new {@class = "form-control"}))
+								@(this.Html.ValidationMessageFor(model => model.StreetNameRu))
+							</div>
+						</div>
+						<div class="form-group">
+							@(this.Html.LabelFor(model => model.StreetNameEn, new {@class = "col-sm-2 control-label"}))
+							<div class="col-sm-10">
+								@(this.Html.TextBoxFor(model => model.StreetNameEn, new {@class = "form-control"}))
+								@(this.Html.ValidationMessageFor(model => model.StreetNameEn))
+							</div>
+						</div>
+						<div class="form-group">
+							@(this.Html.LabelFor(model => model.BuildingNumber, new {@class = "col-sm-2 control-label"}))
+							<div class="col-sm-10">
+								@(this.Html.TextBoxFor(model => model.BuildingNumber, new {@class = "form-control", type = "number", min = "1", max = "1000"}))
+								@(this.Html.ValidationMessageFor(model => model.BuildingNumber))
+							</div>
+						</div>
+						<div class="form-group">
+							@(this.Html.LabelFor(model => model.Housing, new {@class = "col-sm-2 control-label"}))
+							<div class="col-sm-10">
+								@(this.Html.TextBoxFor(model => model.Housing, new {@class = "form-control", type = "number", min = "1", max = "1000"}))
+								@(this.Html.ValidationMessageFor(model => model.Housing))
+							</div>
+						</div>
+						<div class="form-group">
+							@(this.Html.LabelFor(model => model.Litera, new {@class = "col-sm-2 control-label"}))
+							<div class="col-sm-10">
+								@(this.Html.TextBoxFor(model => model.Litera, new {@class = "form-control"}))
+								@(this.Html.ValidationMessageFor(model => model.Litera))
+							</div>
+						</div>
+						<div class="form-group">
+							@(this.Html.LabelFor(model => model.SightTypeIds, new {@class = "col-sm-2 control-label"}))
+							<div class="col-sm-10">
+								@(this.Html.ListBoxFor(m => m.SightTypeIds, (SelectList) this.ViewBag.SightTypes, new {@class = "form-control guide-large-list-box"}))
+							</div>
+						</div>
+						<div class="form-group">
+							@(this.Html.LabelFor(model => model.Phone, new {@class = "col-sm-2 control-label"}))
+							<div class="col-sm-10">
+								@(this.Html.TextBoxFor(model => model.Phone, new {@class = "form-control"}))
+								@(this.Html.ValidationMessageFor(model => model.Phone))
+							</div>
+						</div>
+						<div class="form-group">
+							@(this.Html.LabelFor(model => model.Website, new {@class = "col-sm-2 control-label"}))
+							<div class="col-sm-10">
+								@(this.Html.TextBoxFor(model => model.Website, new {@class = "form-control"}))
+								@(this.Html.ValidationMessageFor(model => model.Website))
+							</div>
+						</div>
+						<div class="form-group">
+							@(this.Html.LabelFor(model => model.Email, new {@class = "col-sm-2 control-label"}))
+							<div class="col-sm-10">
+								@(this.Html.TextBoxFor(model => model.Email, new {@class = "form-control"}))
+								@(this.Html.ValidationMessageFor(model => model.Email))
+							</div>
+						</div>
+						<div class="form-group">
+							@(this.Html.LabelFor(model => model.Lat, new {@class = "col-sm-2 control-label"}))
+							<div class="col-sm-10">
+								@(this.Html.TextBoxFor(model => model.Lat, new {@class = "form-control"}))
+								@(this.Html.ValidationMessageFor(model => model.Lat))
+							</div>
+						</div>
+						<div class="form-group">
+							@(this.Html.LabelFor(model => model.Lng, new {@class = "col-sm-2 control-label"}))
+							<div class="col-sm-10">
+								@(this.Html.TextBoxFor(model => model.Lng, new {@class = "form-control"}))
+								@(this.Html.ValidationMessageFor(model => model.Lng))
+							</div>
+						</div>
+						<div class="form-group">
+							@(this.Html.LabelFor(model => model.FoursquareId, new {@class = "col-sm-2 control-label"}))
+							<div class="col-sm-10">
+								@(this.Html.TextBoxFor(model => model.FoursquareId, new {@class = "form-control"}))
+								@(this.Html.ValidationMessageFor(model => model.FoursquareId))
+							</div>
+						</div>
+						<div class="form-group">
+							@(this.Html.LabelFor(model => model.FoursquareName, new {@class = "col-sm-2 control-label"}))
+							<div class="col-sm-10">
+								@(this.Html.TextBoxFor(model => model.FoursquareName, new {@class = "form-control"}))
+								@(this.Html.ValidationMessageFor(model => model.FoursquareName))
+							</div>
+						</div>
+					</fieldset>
+				@*</div>
+				<div class="tab-pane" id="russianTab">*@
+					<div class="form-group">
+						@(this.Html.LabelFor(model => model.TeaserRu, new {@class = "col-sm-2 control-label"}))
+						<div class="col-sm-10">
+							@(this.Html.TextBoxFor(model => model.TeaserRu, new {@class = "form-control"}))
+							@(this.Html.ValidationMessageFor(model => model.TeaserRu))
+						</div>
+					</div>
+					<div class="form-group">
+						@(this.Html.LabelFor(model => model.BodyRu, new {@class = "col-sm-2 control-label"}))
+						<div class="col-sm-10">
+							@(this.Html.TextAreaFor(model => model.BodyRu, new {id = "bodyRu", @class = "form-control guide-article-body-textarea", placeholder = "Enter text ..."}))
+							@(this.Html.ValidationMessageFor(model => model.BodyRu))
+						</div>
+					</div>
+				@*</div>
+				<div class="tab-pane" id="englishTab">*@
+					<div class="form-group">
+						@(this.Html.LabelFor(model => model.TeaserEn, new {@class = "col-sm-2 control-label"}))
+						<div class="col-sm-10">
+							@(this.Html.TextBoxFor(model => model.TeaserEn, new {@class = "form-control"}))
+							@(this.Html.ValidationMessageFor(model => model.TeaserEn))
+						</div>
+					</div>
+					<div class="form-group">
+						@(this.Html.LabelFor(model => model.BodyEn, new {@class = "col-sm-2 control-label"}))
+						<div class="col-sm-10">
+							@(this.Html.TextAreaFor(model => model.BodyEn, new {id = "bodyEn", @class = "form-control guide-article-body-textarea", placeholder = "Enter text ..."}))
+							@(this.Html.ValidationMessageFor(model => model.BodyEn))
+						</div>
+					</div>
+				@*</div>
+			</div>*@
+			<br />
+			<p class="pull-right">
+				<input id="FetchFromFoursquareBtn" type="submit" class="btn btn-primary" value="Save with fetch from foursuare" />
+				<input type="submit" class="btn btn-primary" value="Save and go to the list" />
+			</p>
+		}
+	</div>
+</div>

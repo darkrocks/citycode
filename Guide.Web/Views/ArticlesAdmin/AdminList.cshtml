@@ -1,0 +1,30 @@
+﻿@using Telerik.Web.Mvc.UI
+@{
+	this.Layout = "~/Views/Layouts/_AdminLayout.cshtml";
+}
+@section scripts
+{
+	@Scripts.Render("~/bundles/jqueryval")
+	@(this.Html.Telerik().ScriptRegistrar().Globalization(true).jQuery(false).jQueryValidation(false).DefaultGroup(group => group.DefaultPath("~/Scripts/telerik/").Compress(true)))
+}
+@section styles
+{
+	@(this.Html.Telerik().StyleSheetRegistrar().DefaultGroup(group => group.DefaultPath("~/Content/telerik/").Add("telerik.common.min.css").Add("telerik.windows7.min.css").Combined(true)))
+}
+<div class="row">
+	<div class="col-md-12">
+		<h2>Administration</h2>
+		<h3>Articles</h3>
+
+		@(this.Html.Partial("_AdminSearch"))
+		<br/>
+		<br />
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		@(this.Html.ActionLink("Create", "Create", "ArticlesAdmin", null, new { @class = "btn btn-default" }))
+		@(this.Html.Partial("_ArticlesGrid"))
+	</div>
+</div>

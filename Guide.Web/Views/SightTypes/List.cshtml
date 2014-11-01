@@ -1,0 +1,67 @@
+﻿@using Guide.Model.Entities
+@using Telerik.Web.Mvc.UI
+@{
+	this.Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@section scripts
+{
+	@Scripts.Render("~/bundles/jqueryval")
+	@(this.Html.Telerik().ScriptRegistrar().Globalization(true).jQuery(false).jQueryValidation(false).DefaultGroup(group => group.DefaultPath("~/Scripts/telerik/").Compress(true)))
+}
+@section styles
+{
+	@(this.Html.Telerik().StyleSheetRegistrar().DefaultGroup(group => group.DefaultPath("~/Content/telerik/").Add("telerik.common.min.css").Add("telerik.windows7.min.css").Combined(true)))
+}
+<div class="row">
+	<div class="col-md-12">
+		<h2>Administration</h2>
+		<h3>Articles</h3>
+		<br />
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		@{
+			@(Html.Telerik().Grid<SightType>()
+			.Filterable().Groupable()
+		.Name("SightTypesGrid")
+		.DataKeys(keys =>
+		{
+			keys.Add("Id");
+		})
+		.ToolBar(commands => commands.Insert().Text("Sight Type").
+			ButtonType(GridButtonType.BareImage).
+			ImageHtmlAttributes(new { style = "margin-left:0" }))
+		.DataBinding(dataBinding =>
+		{
+			dataBinding.Ajax()
+				.Select("Grid", "SightTypes", null)
+				.Insert("GridInsert", "SightTypes", null)
+				.Update("GridSave", "SightTypes", null)
+				.Delete("GridDelete", "SightTypes", null);
+		})
+		.Columns(columns =>
+		{
+			columns.Bound(p => p.Id).Hidden().ReadOnly().Width(20);
+			columns.Bound(p => p.NameEn).Width(200);
+			columns.Bound(p => p.NameRu).Width(200);
+			columns.Bound(p => p.PluralNameEn).Width(200);
+			columns.Bound(p => p.PluralNameRu).Width(200);
+			columns.Bound(p => p.Published).Width(80);
+			columns.Command(commands =>
+			{
+				commands.Edit().ButtonType(GridButtonType.BareImage);
+				commands.Delete().ButtonType(GridButtonType.BareImage);
+			}).Width(30);
+		})
+		.Editable(editing => editing.Mode(GridEditMode.InLine)
+		.InsertRowPosition(GridInsertRowPosition.Top))
+		.Pageable()
+		.Scrollable(c => c.Height("600px"))
+		.Sortable()
+		.Selectable()
+			)
+
+		}
+	</div>
+</div>

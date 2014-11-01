@@ -1,0 +1,32 @@
+﻿@using Guide.Model.Entities
+@using Telerik.Web.Mvc.UI
+@{
+	this.Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@section scripts
+{
+	@Scripts.Render("~/bundles/jqueryval")
+	@(this.Html.Telerik().ScriptRegistrar().Globalization(true).jQuery(false).jQueryValidation(false).DefaultGroup(group => group.DefaultPath("~/Scripts/telerik/").Compress(true)))
+}
+@section styles
+{
+	@(this.Html.Telerik().StyleSheetRegistrar().DefaultGroup(group => group.DefaultPath("~/Content/telerik/").Add("telerik.common.min.css").Add("telerik.windows7.min.css").Combined(true)))
+}
+<div class="row">
+	<div class="col-md-12">
+		<h2>Images</h2>
+		<h3>@Resx.Articles.Search.SearchResultsFor "@(this.ViewBag.Query)"</h3>
+		<div>
+			@(this.Html.Partial("_AdminSearch"))
+		</div>
+		<br />
+		<br />
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		@Html.ActionLink("Create", "Create", "Images", null, new { @class = "btn btn-default" })
+		<br />
+		@(this.Html.Partial("_ImagesGrid"))
+	</div>
+</div>

@@ -1,0 +1,10 @@
+﻿@model List<Guide.Data.Services.AlphabeticalPage>
+
+<ul class="pagination">
+	<li><a href="#">&laquo;</a></li>
+	@foreach (var link in Model)
+	{
+			<li><a href="@link.Url">@link.Letter</a></li>
+	}
+	<li><a href="#">&raquo;</a></li>
+</ul>

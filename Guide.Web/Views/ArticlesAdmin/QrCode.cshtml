@@ -1,0 +1,21 @@
+﻿@{
+	this.Layout = "~/Views/Layouts/_WrapperLayout.cshtml";
+}
+@model Guide.Model.Model.ArticleEditModel
+	@section styles{
+		@Styles.Render("~/Content/app")
+	}
+
+		@if (Model.QrImages != null && Model.QrImages.Count > 0)
+{
+	<div class="container container-sidebar">
+		<div class="row">
+			<div class="col-md-12">
+				<h3 style="margin-left: 70px;">
+					@(this.Model.HeaderRu)
+				</h3>
+				<img src="@Model.QrImages[0].Url" />
+			</div>
+		</div>
+	</div>
+}
